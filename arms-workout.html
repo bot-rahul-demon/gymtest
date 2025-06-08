@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arms Workout</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Arial', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Page Container */
+        .page-container {
+            width: 100vw;
+            height: 100vh;
+            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('arms/bg1.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Card Container - Same design as homepage */
+        .card-container {
+            --card-bg-color: rgba(20, 20, 20, 0.9);
+            --border-radius: 20px;
+            width: 75%;
+            height: 70%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .card-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--border-radius);
+            padding: 3px;
+            background: linear-gradient(45deg, 
+                rgba(255, 255, 255, 0.8), 
+                rgba(255, 255, 255, 0.2), 
+                rgba(255, 255, 255, 0.8), 
+                rgba(255, 255, 255, 0.2)
+            );
+            background-size: 200% 200%;
+            animation: borderGlow 3s ease-in-out infinite;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: xor;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            background: var(--card-bg-color);
+            border-radius: calc(var(--border-radius) - 3px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            z-index: 1;
+            position: relative;
+            padding: 40px 20px;
+        }
+
+        /* Exercise Card - For workout pages */
+        .exercise-card {
+            width: 85%;
+            height: 60%;
+            background: var(--card-bg-color);
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exercise-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--border-radius);
+            padding: 2px;
+            background: linear-gradient(45deg, 
+                rgba(255, 255, 255, 0.6), 
+                rgba(255, 255, 255, 0.1), 
+                rgba(255, 255, 255, 0.6), 
+                rgba(255, 255, 255, 0.1)
+            );
+            background-size: 200% 200%;
+            animation: borderGlow 3s ease-in-out infinite;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: xor;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            z-index: -1;
+        }
+
+        .exercise-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1.2;
+        }
+
+        .exercise-gif {
+            width: 100%;
+            height: 70%;
+            border-radius: 15px;
+            object-fit: cover;
+            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .exercise-video {
+            width: 100%;
+            height: 70%;
+            border-radius: 15px;
+            object-fit: cover;
+            background: #333;
+        }
+
+        /* Glass Effect Button */
+        .glass-button {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 12px 25px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            min-width: 140px;
+            text-align: center;
+        }
+
+        .glass-button:hover,
+        .glass-button:active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Bottom Action Buttons */
+        .bottom-actions {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 40px;
+            z-index: 1000;
+        }
+
+        .action-button {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-button:hover,
+        .action-button:active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-button.done {
+            background: rgba(34, 197, 94, 0.3);
+            border-color: rgba(34, 197, 94, 0.5);
+        }
+
+        .action-button.skip {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+
+        /* Timer Overlay */
+        .timer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            gap: 40px;
+        }
+
+        .timer-overlay.active {
+            display: flex;
+        }
+
+        .timer-display {
+            font-size: 80px;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .timer-label {
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 20px;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .timer-button {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 15px 30px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .timer-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Completion Screen */
+        .completion-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .completion-screen.active {
+            display: flex;
+        }
+
+        .completion-screen h1 {
+            font-size: 48px;
+            color: white;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .motivational-quote {
+            font-size: 24px;
+            color: white;
+            font-style: italic;
+            margin-bottom: 30px;
+            max-width: 80%;
+            line-height: 1.4;
+        }
+
+        .thank-you-message {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 40px;
+            max-width: 70%;
+            line-height: 1.6;
+        }
+
+        /* Hide elements */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 480px) {
+            .card-container {
+                width: 90%;
+                height: 75%;
+            }
+            
+            .exercise-card {
+                width: 90%;
+                height: 55%;
+            }
+            
+            .exercise-name {
+                font-size: 18px;
+            }
+            
+            .timer-display {
+                font-size: 60px;
+            }
+            
+            .completion-screen h1 {
+                font-size: 36px;
+            }
+            
+            .motivational-quote {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Initial Card Page -->
+    <div id="initial-page" class="page-container">
+        <div class="card-container">
+            <div class="card-inner">
+                <button class="glass-button" onclick="startWorkout()">
+                    Start Workout
+                </button>
+                <button class="glass-button" onclick="goBack()">
+                    Go Back
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workout Page -->
+    <div id="workout-page" class="page-container hidden">
+        <div class="exercise-card">
+            <div class="exercise-name" id="exercise-name">Behind Head Extension (14 reps) 1/4</div>
+            <video class="exercise-video" id="exercise-video" autoplay loop muted playsinline>
+                <source src="arms/behind-head-extension.mp4" type="video/mp4">
+                <div class="exercise-gif" style="display: flex; align-items: center; justify-content: center; color: #666; font-size: 14px;">
+                    Video: arms/behind-head-extension.mp4
+                </div>
+            </video>
+        </div>
+        
+        <div class="bottom-actions">
+            <button class="action-button skip" onclick="skipSet()">
+                →
+            </button>
+            <button class="action-button done" onclick="completeSet()">
+                ✓
+            </button>
+        </div>
+    </div>
+
+    <!-- Timer Overlay -->
+    <div id="timer-overlay" class="timer-overlay">
+        <div class="timer-label" id="timer-label">Rest Between Sets</div>
+        <div class="timer-display" id="timer-display">00:20</div>
+        <div class="timer-controls">
+            <button class="timer-button" onclick="addTime()">Add 10 Seconds</button>
+            <button class="timer-button" onclick="skipTimer()">Skip Timer</button>
+        </div>
+    </div>
+
+    <!-- Completion Screen -->
+    <div id="completion-screen" class="completion-screen">
+        <h1>Workout Complete!</h1>
+        <div class="motivational-quote">
+            "Strong arms are built one rep at a time, one set at a time, one day at a time."
+        </div>
+        <div class="thank-you-message">
+            Congratulations on completing your arms workout! You've pushed through every set and rep. 
+            Your dedication to building strength will pay off. Keep training hard!
+        </div>
+        <button class="glass-button" onclick="goBack()">
+            Back to Home
+        </button>
+    </div>
+
+    <script>
+        // Workout data with sets and reps
+        const exercises = [
+            { name: 'Behind Head Extension', shortName: 'Behind Head Extension', reps: 14, sets: 4, video: 'behind-head-extension.mp4' },
+            { name: 'Concentration Curls', shortName: 'Concentration Curls', reps: 12, sets: 4, video: 'arms/concentration-curls.mp4' },
+            { name: 'DB Kickback', shortName: 'DB Kickback', reps: 9, sets: 4, video: 'arms/db-kickback.mp4' },
+            { name: 'Curls with Turns', shortName: 'Curls with Turns', reps: 10, sets: 5, video: 'arms/curls-with-turns.mp4' },
+            { name: 'Lateral DB Rows', shortName: 'Lateral DB Rows', reps: 12, sets: 4, video: 'arms/lateral-db-rows.mp4' },
+            { name: 'Front DB Rows', shortName: 'Front DB Rows', reps: 13, sets: 4, video: 'arms/front-db-rows.mp4' },
+            { name: 'Wrist Curls', shortName: 'Wrist Curls', reps: 20, sets: 3, video: 'arms/wrist-curls.mp4' },
+            { name: 'Single DB Curl', shortName: 'Single DB Curl', reps: 12, sets: 4, video: 'arms/single-db-curl.mp4' }
+        ];
+
+        let currentExerciseIndex = 0;
+        let currentSet = 1;
+        let timerInterval;
+        let timeRemaining = 20;
+        let isExerciseRest = false; // false = set rest (20s), true = exercise rest (60s)
+
+        // Initialize app
+        function initApp() {
+            history.replaceState({ page: 'arms-initial' }, 'Arms Workout', '/arms');
+        }
+
+        // Start workout
+        function startWorkout() {
+            document.getElementById('initial-page').classList.add('hidden');
+            document.getElementById('workout-page').classList.remove('hidden');
+            showCurrentExercise();
+            history.pushState({ page: 'arms-workout' }, 'Arms Workout', '/arms/workout');
+        }
+
+        // Show current exercise
+        function showCurrentExercise() {
+            if (currentExerciseIndex >= exercises.length) {
+                showCompletion();
+                return;
+            }
+
+            const exercise = exercises[currentExerciseIndex];
+            const exerciseName = `${exercise.shortName} (${exercise.reps} reps) ${currentSet}/${exercise.sets}`;
+            
+            document.getElementById('exercise-name').textContent = exerciseName;
+            const videoElement = document.getElementById('exercise-video');
+            const sourceElement = videoElement.querySelector('source');
+            
+            sourceElement.src = exercise.video;
+            videoElement.load(); // Reload video with new source
+            
+            // Handle video load error
+            videoElement.onerror = function() {
+                const fallbackDiv = videoElement.querySelector('div');
+                if (fallbackDiv) {
+                    fallbackDiv.textContent = `Video: ${exercise.video}`;
+                    fallbackDiv.style.display = 'flex';
+                }
+            };
+        }
+
+        // Complete current set (checkmark button)
+        function completeSet() {
+            const currentExercise = exercises[currentExerciseIndex];
+            
+            if (currentSet < currentExercise.sets) {
+                // More sets remaining for this exercise - show 20s rest
+                showTimer(false); // false = set rest
+            } else {
+                // Exercise complete, check if more exercises
+                if (currentExerciseIndex < exercises.length - 1) {
+                    // More exercises - show 60s rest
+                    showTimer(true); // true = exercise rest
+                } else {
+                    // All exercises complete
+                    showCompletion();
+                }
+            }
+        }
+
+        // Skip current set (arrow button)
+        function skipSet() {
+            const currentExercise = exercises[currentExerciseIndex];
+            
+            if (currentSet < currentExercise.sets) {
+                // Move to next set of same exercise
+                currentSet++;
+                showCurrentExercise();
+            } else {
+                // Move to next exercise
+                moveToNextExercise();
+            }
+        }
+
+        // Show timer
+        function showTimer(isExerciseBreak) {
+            isExerciseRest = isExerciseBreak;
+            timeRemaining = isExerciseBreak ? 60 : 20;
+            
+            const label = isExerciseBreak ? 'Rest Between Exercises' : 'Rest Between Sets';
+            document.getElementById('timer-label').textContent = label;
+            document.getElementById('timer-overlay').classList.add('active');
+            updateTimerDisplay();
+            startTimer();
+        }
+
+        // Start timer countdown
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    hideTimer();
+                    
+                    if (isExerciseRest) {
+                        moveToNextExercise();
+                    } else {
+                        // Move to next set of same exercise
+                        currentSet++;
+                        showCurrentExercise();
+                    }
+                }
+            }, 1000);
+        }
+
+        // Update timer display
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timer-display').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Add 10 seconds to timer
+        function addTime() {
+            timeRemaining += 10;
+            updateTimerDisplay();
+        }
+
+        // Skip timer
+        function skipTimer() {
+            clearInterval(timerInterval);
+            hideTimer();
+            
+            if (isExerciseRest) {
+                moveToNextExercise();
+            } else {
+                // Move to next set of same exercise
+                currentSet++;
+                showCurrentExercise();
+            }
+        }
+
+        // Hide timer
+        function hideTimer() {
+            document.getElementById('timer-overlay').classList.remove('active');
+        }
+
+        // Move to next exercise
+        function moveToNextExercise() {
+            currentExerciseIndex++;
+            currentSet = 1;
+            showCurrentExercise();
+        }
+
+        // Show completion screen
+        function showCompletion() {
+            document.getElementById('workout-page').classList.add('hidden');
+            document.getElementById('completion-screen').classList.add('active');
+            history.pushState({ page: 'arms-complete' }, 'Workout Complete', '/arms/complete');
+        }
+
+        // Go back to homepage
+        function goBack() {
+            // Reset workout state
+            currentExerciseIndex = 0;
+            currentSet = 1;
+            clearInterval(timerInterval);
+            
+            // Hide all screens
+            document.getElementById('initial-page').classList.remove('hidden');
+            document.getElementById('workout-page').classList.add('hidden');
+            document.getElementById('timer-overlay').classList.remove('active');
+            document.getElementById('completion-screen').classList.remove('active');
+            
+            // Navigate back to main page
+            window.location.href = 'index.html';
+        }
+
+        // Handle browser back button
+        window.addEventListener('popstate', (event) => {
+            if (event.state) {
+                switch(event.state.page) {
+                    case 'arms-initial':
+                        // Reset to initial state
+                        currentExerciseIndex = 0;
+                        currentSet = 1;
+                        clearInterval(timerInterval);
+                        document.getElementById('initial-page').classList.remove('hidden');
+                        document.getElementById('workout-page').classList.add('hidden');
+                        document.getElementById('timer-overlay').classList.remove('active');
+                        document.getElementById('completion-screen').classList.remove('active');
+                        break;
+                    case 'arms-workout':
+                        // Back to workout from timer/completion
+                        document.getElementById('timer-overlay').classList.remove('active');
+                        document.getElementById('completion-screen').classList.remove('active');
+                        document.getElementById('workout-page').classList.remove('hidden');
+                        break;
+                }
+            } else {
+                goBack();
+            }
+        });
+
+        // Prevent zoom on double tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>

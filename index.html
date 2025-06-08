@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Arial', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Carousel Container */
+        .carousel-container {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Individual Slides */
+        .slide {
+            flex: 0 0 100vw;
+            height: 100vh;
+            position: relative;
+            scroll-snap-align: start;
+            background-image: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Animated Card Container */
+        .card-container {
+            --card-bg-color: rgba(20, 20, 20, 0.9);
+            --border-radius: 20px;
+            width: 75%;
+            height: 70%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .card-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--border-radius);
+            padding: 3px;
+            background: linear-gradient(45deg, 
+                rgba(255, 255, 255, 0.8), 
+                rgba(255, 255, 255, 0.2), 
+                rgba(255, 255, 255, 0.8), 
+                rgba(255, 255, 255, 0.2)
+            );
+            background-size: 200% 200%;
+            animation: borderGlow 3s ease-in-out infinite;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: xor;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: calc(var(--border-radius) - 3px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Card Background Images - Now fill entire card */
+        .card-container.chest .card-inner {
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('chest.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .card-container.arms .card-inner {
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('arms.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .card-container.abs .card-inner {
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('abs.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .card-container.legs .card-inner {
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('legs.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+      
+        
+
+        /* Glass Effect Button - Updated for overlay positioning */
+        .glass-button {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 12px 25px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            position: absolute;
+            z-index: 10;
+        }
+
+        .glass-button:hover,
+        .glass-button:active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Content Pages */
+        .content-page {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .content-page.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .content-page h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .content-page p {
+            font-size: 20px;
+            line-height: 1.6;
+            max-width: 600px;
+            opacity: 0.9;
+        }
+
+        /* Hide homepage when showing content */
+        .homepage.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Homepage Carousel -->
+    <div id="homepage" class="homepage">
+        <div class="carousel-container" id="carousel">
+            <!-- Clone of last slide (Stats) for infinite loop -->
+            <div class="slide legs">
+                <div class="card-container legs">
+                    <div class="card-inner">
+                        <button class="glass-button" onclick="goToPage('legs')">
+                            Leg Workouts
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Original slides -->
+            <!-- Chest Slide -->
+            <div class="slide chest">
+                <div class="card-container chest">
+                    <div class="card-inner">
+                        <button class="glass-button" onclick="goToPage('chest')">
+                            Chest Workouts
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Arms Slide -->
+            <div class="slide arms">
+                <div class="card-container arms">
+                    <div class="card-inner">
+                        <button class="glass-button" onclick="goToPage('arms')">
+                            Arm Workouts
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Abs Slide -->
+             <div class="slide abs">
+              <div class="card-container abs">
+                  <div class="card-inner">
+                      <button class="glass-button" onclick="goToPage('abs')">
+                          Abs Workouts
+                      </button>
+                  </div>
+              </div>
+          </div>
+            
+            <!-- Legs Slide -->
+            <div class="slide legs">
+                <div class="card-container legs">
+                    <div class="card-inner">
+                        <button class="glass-button" onclick="goToPage('legs')">
+                            Leg Workouts
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <!-- Clone of first slide (Chest) for infinite loop -->
+            <div class="slide chest">
+                <div class="card-container chest">
+                    <div class="card-inner">
+                        <button class="glass-button" onclick="goToPage('chest')">
+                            Chest Workouts
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Pages -->
+    <div id="chest-page" class="content-page">
+        <h1>Chest Workouts</h1>
+        <p>This is the Chest page. Here you can track your chest exercises, view your progress, and plan your next workout session.</p>
+    </div>
+
+    <div id="arms-page" class="content-page">
+        <h1>Arm Workouts</h1>
+        <p>This is the Arms page. Track your bicep and tricep exercises, monitor your arm strength gains, and build powerful arms.</p>
+    </div>
+
+    <div id="legs-page" class="content-page">
+        <h1>Leg Workouts</h1>
+        <p>This is the Legs page. Focus on building strong legs with squats, lunges, and other lower body exercises.</p>
+    </div>
+
+    <div id="stats-page" class="content-page">
+        <h1>Your Stats</h1>
+        <p>This is the Stats page. View your workout statistics, progress charts, and achievement milestones.</p>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const carousel = document.getElementById('carousel');
+        const homepage = document.getElementById('homepage');
+
+        // Initialize app
+        function initApp() {
+            // Set initial history state
+            history.replaceState({ page: 'home' }, 'Exercise Tracker', '/');
+            
+            // Start at the first real slide (index 1)
+            carousel.scrollLeft = carousel.offsetWidth;
+            
+            // Handle scroll end for infinite loop
+            let scrollTimeout;
+            carousel.addEventListener('scroll', () => {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    handleInfiniteLoop();
+                }, 150);
+            });
+        }
+
+        // Handle infinite loop transitions
+        function handleInfiniteLoop() {
+            const scrollLeft = carousel.scrollLeft;
+            const slideWidth = carousel.offsetWidth;
+            const slideIndex = Math.round(scrollLeft / slideWidth);
+            
+            // If we're at the clone slides, jump to the real slides
+            if (slideIndex === 0) {
+                // At first clone (stats), jump to real stats slide
+                carousel.scrollLeft = slideWidth * 4;
+            } else if (slideIndex === 5) {
+                // At last clone (chest), jump to real chest slide
+                carousel.scrollLeft = slideWidth;
+            }
+        }
+
+        // Navigate to a specific page
+        function goToPage(pageId) {
+    // Check if it's a workout page that has its own HTML file
+    if (pageId === 'chest' || pageId === 'arms' || pageId === 'legs' || pageId === 'abs') {
+        window.location.href = pageId + '-workout.html';
+    }
+    else if(pageId === 'stats') {
+        // For stats, redirect to stats page
+      window.location.href = pageId + '.html';
+    } else {
+        // Handle other pages (like stats) that stay on the same page
+        const page = document.getElementById(pageId + '-page');
+        
+        if (page) {
+            // Hide homepage
+            homepage.classList.add('hidden');
+            
+            // Show target page
+            page.classList.add('active');
+            
+            // Update history
+            history.pushState({ page: pageId }, pageId.charAt(0).toUpperCase() + pageId.slice(1), '/' + pageId);
+        }
+    }
+}
+
+        // Go back to homepage
+        function goHome() {
+            // Hide all content pages
+            document.querySelectorAll('.content-page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show homepage
+            homepage.classList.remove('hidden');
+        }
+
+        // Handle browser back button
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.page === 'home') {
+                goHome();
+            } else if (event.state && event.state.page) {
+                goToPage(event.state.page);
+            } else {
+                // Fallback to home if no state
+                goHome();
+            }
+        });
+
+        // Handle touch events for better mobile experience (manual swipe only)
+        let startX = 0;
+        let scrollLeft = 0;
+        let isScrolling = false;
+
+        carousel.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].pageX - carousel.offsetLeft;
+            scrollLeft = carousel.scrollLeft;
+            isScrolling = true;
+        });
+
+        carousel.addEventListener('touchmove', (e) => {
+            if (!isScrolling) return;
+            e.preventDefault();
+            const x = e.touches[0].pageX - carousel.offsetLeft;
+            const walk = (x - startX);
+            carousel.scrollLeft = scrollLeft - walk;
+        });
+
+        carousel.addEventListener('touchend', () => {
+            isScrolling = false;
+        });
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+
+        // Prevent zoom on double tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</body>
+</html>
+

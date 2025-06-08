@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chest Workout</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Arial', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Page Container */
+        .page-container {
+            width: 100vw;
+            height: 100vh;
+            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('chest/bg1.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Card Container - Same design as homepage */
+        .card-container {
+            --card-bg-color: rgba(20, 20, 20, 0.9);
+            --border-radius: 20px;
+            width: 75%;
+            height: 70%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .card-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--border-radius);
+            padding: 3px;
+            background: linear-gradient(45deg, 
+                rgba(255, 255, 255, 0.8), 
+                rgba(255, 255, 255, 0.2), 
+                rgba(255, 255, 255, 0.8), 
+                rgba(255, 255, 255, 0.2)
+            );
+            background-size: 200% 200%;
+            animation: borderGlow 3s ease-in-out infinite;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: xor;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            background: var(--card-bg-color);
+            border-radius: calc(var(--border-radius) - 3px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            z-index: 1;
+            position: relative;
+            padding: 40px 20px;
+        }
+
+        /* Exercise Card - For workout pages */
+        .exercise-card {
+            width: 85%;
+            height: 60%;
+            background: var(--card-bg-color);
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exercise-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--border-radius);
+            padding: 2px;
+            background: linear-gradient(45deg, 
+                rgba(255, 255, 255, 0.6), 
+                rgba(255, 255, 255, 0.1), 
+                rgba(255, 255, 255, 0.6), 
+                rgba(255, 255, 255, 0.1)
+            );
+            background-size: 200% 200%;
+            animation: borderGlow 3s ease-in-out infinite;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: xor;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            z-index: -1;
+        }
+
+        .exercise-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .exercise-gif {
+            width: 100%;
+            height: 70%;
+            border-radius: 15px;
+            object-fit: cover;
+            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Glass Effect Button */
+        .glass-button {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 12px 25px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            min-width: 140px;
+            text-align: center;
+        }
+
+        .glass-button:hover,
+        .glass-button:active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Bottom Action Buttons */
+        .bottom-actions {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 40px;
+            z-index: 1000;
+        }
+
+        .action-button {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-button:hover,
+        .action-button:active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-button.done {
+            background: rgba(34, 197, 94, 0.3);
+            border-color: rgba(34, 197, 94, 0.5);
+        }
+
+        .action-button.skip {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+
+        /* Timer Overlay */
+        .timer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            gap: 40px;
+        }
+
+        .timer-overlay.active {
+            display: flex;
+        }
+
+        .timer-display {
+            font-size: 80px;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 20px;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .timer-button {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 15px 30px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .timer-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Completion Screen */
+        .completion-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .completion-screen.active {
+            display: flex;
+        }
+
+        .completion-screen h1 {
+            font-size: 48px;
+            color: white;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .motivational-quote {
+            font-size: 24px;
+            color: white;
+            font-style: italic;
+            margin-bottom: 30px;
+            max-width: 80%;
+            line-height: 1.4;
+        }
+
+        .thank-you-message {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 40px;
+            max-width: 70%;
+            line-height: 1.6;
+        }
+
+        /* Hide elements */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 480px) {
+            .card-container {
+                width: 90%;
+                height: 75%;
+            }
+            
+            .exercise-card {
+                width: 90%;
+                height: 55%;
+            }
+            
+            .exercise-name {
+                font-size: 20px;
+            }
+            
+            .timer-display {
+                font-size: 60px;
+            }
+            
+            .completion-screen h1 {
+                font-size: 36px;
+            }
+            
+            .motivational-quote {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Initial Card Page -->
+    <div id="initial-page" class="page-container">
+        <div class="card-container">
+            <div class="card-inner">
+                <button class="glass-button" onclick="startWorkout()">
+                    Start Workout
+                </button>
+                <button class="glass-button" onclick="goBack()">
+                    Go Back
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workout Page -->
+    <div id="workout-page" class="page-container hidden">
+        <div class="exercise-card">
+            <div class="exercise-name" id="exercise-name">Push-ups</div>
+            <img class="exercise-gif" id="exercise-gif" src="chest/pushups.gif" alt="Exercise demonstration" onerror="this.style.display='flex'; this.innerHTML='GIF: chest/pushups.gif';">
+        </div>
+        
+        <div class="bottom-actions">
+            <button class="action-button done" onclick="showTimer()">
+                ✓
+            </button>
+            <button class="action-button skip" onclick="nextExercise()">
+                →
+            </button>
+        </div>
+    </div>
+
+    <!-- Timer Overlay -->
+    <div id="timer-overlay" class="timer-overlay">
+        <div class="timer-display" id="timer-display">00:30</div>
+        <div class="timer-controls">
+            <button class="timer-button" onclick="addTime()">Add 10 Seconds</button>
+            <button class="timer-button" onclick="skipTimer()">Skip Timer</button>
+        </div>
+    </div>
+
+    <!-- Completion Screen -->
+    <div id="completion-screen" class="completion-screen">
+        <h1>Workout Complete!</h1>
+        <div class="motivational-quote">
+            "The pain you feel today will be the strength you feel tomorrow."
+        </div>
+        <div class="thank-you-message">
+            Thank you for completing your chest workout and maintaining your consistency! 
+            Your dedication to fitness is what will drive your success. Keep pushing forward!
+        </div>
+        <button class="glass-button" onclick="goBack()">
+            Back to Home
+        </button>
+    </div>
+
+    <script>
+        // Workout data
+        const exercises = [
+            { name: 'Push-ups', gif: 'chest/pushups.gif' },
+            { name: 'Chest Press', gif: 'chest/chest-press.gif' },
+            { name: 'Chest Fly', gif: 'chest/chest-fly.gif' },
+            { name: 'Incline Push-ups', gif: 'chest/incline-pushups.gif' },
+            { name: 'Diamond Push-ups', gif: 'chest/diamond-pushups.gif' }
+        ];
+
+        let currentExerciseIndex = 0;
+        let timerInterval;
+        let timeRemaining = 30;
+
+        // Initialize app
+        function initApp() {
+            // Set initial history state
+            history.replaceState({ page: 'chest-initial' }, 'Chest Workout', '/chest');
+        }
+
+        // Start workout
+        function startWorkout() {
+            document.getElementById('initial-page').classList.add('hidden');
+            document.getElementById('workout-page').classList.remove('hidden');
+            showCurrentExercise();
+            history.pushState({ page: 'chest-workout' }, 'Chest Workout', '/chest/workout');
+        }
+
+        // Show current exercise
+        function showCurrentExercise() {
+            if (currentExerciseIndex >= exercises.length) {
+                showCompletion();
+                return;
+            }
+
+            const exercise = exercises[currentExerciseIndex];
+            document.getElementById('exercise-name').textContent = exercise.name;
+            const gifElement = document.getElementById('exercise-gif');
+            gifElement.src = exercise.gif;
+            gifElement.onerror = function() {
+                this.style.display = 'flex';
+                this.innerHTML = `GIF: ${exercise.gif}`;
+            };
+        }
+
+        // Show timer
+        function showTimer() {
+            document.getElementById('timer-overlay').classList.add('active');
+            timeRemaining = 30;
+            updateTimerDisplay();
+            startTimer();
+        }
+
+        // Start timer countdown
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    hideTimer();
+                    nextExercise();
+                }
+            }, 1000);
+        }
+
+        // Update timer display
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timer-display').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Add 10 seconds to timer
+        function addTime() {
+            timeRemaining += 10;
+            updateTimerDisplay();
+        }
+
+        // Skip timer
+        function skipTimer() {
+            clearInterval(timerInterval);
+            hideTimer();
+            nextExercise();
+        }
+
+        // Hide timer
+        function hideTimer() {
+            document.getElementById('timer-overlay').classList.remove('active');
+        }
+
+        // Move to next exercise
+        function nextExercise() {
+            currentExerciseIndex++;
+            showCurrentExercise();
+        }
+
+        // Show completion screen
+        function showCompletion() {
+            document.getElementById('workout-page').classList.add('hidden');
+            document.getElementById('completion-screen').classList.add('active');
+            history.pushState({ page: 'chest-complete' }, 'Workout Complete', '/chest/complete');
+        }
+
+        // Go back to homepage
+        function goBack() {
+            // Reset workout state
+            currentExerciseIndex = 0;
+            clearInterval(timerInterval);
+            
+            // Hide all screens
+            document.getElementById('initial-page').classList.remove('hidden');
+            document.getElementById('workout-page').classList.add('hidden');
+            document.getElementById('timer-overlay').classList.remove('active');
+            document.getElementById('completion-screen').classList.remove('active');
+            
+            // Navigate back to main page
+            window.location.href = 'index.html';
+        }
+
+        // Handle browser back button
+        window.addEventListener('popstate', (event) => {
+            if (event.state) {
+                switch(event.state.page) {
+                    case 'chest-initial':
+                        // Reset to initial state
+                        currentExerciseIndex = 0;
+                        clearInterval(timerInterval);
+                        document.getElementById('initial-page').classList.remove('hidden');
+                        document.getElementById('workout-page').classList.add('hidden');
+                        document.getElementById('timer-overlay').classList.remove('active');
+                        document.getElementById('completion-screen').classList.remove('active');
+                        break;
+                    case 'chest-workout':
+                        // Back to workout from timer/completion
+                        document.getElementById('timer-overlay').classList.remove('active');
+                        document.getElementById('completion-screen').classList.remove('active');
+                        document.getElementById('workout-page').classList.remove('hidden');
+                        break;
+                }
+            } else {
+                goBack();
+            }
+        });
+
+        // Prevent zoom on double tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
